@@ -10,8 +10,8 @@ public class Main {
 
         Map<String,String> listaNadawcow = ExcelRead.readRecipients(FILE_PATH);
 
-
-        Session session = Session.getDefaultInstance(ConnectionProperties.getServerProperties(), ConnectionProperties.auth());
+        ConnectionProperties connectionProperties = new ConnectionProperties();
+        Session sessionSend = Session.getDefaultInstance(connectionProperties.sendEmails(), connectionProperties.auth());
         System.out.println("Session created");
         System.out.println(ConnectionProperties.configFileMap.get(ConnectionProperties.cNotListed));
 

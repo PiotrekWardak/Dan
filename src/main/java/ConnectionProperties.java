@@ -11,9 +11,10 @@ import java.util.Properties;
 public class ConnectionProperties {
 
     protected static Map<String,String> configFileMap=new HashMap<>();
-     static String cLogin = "LOGIN",cPass="PASS", cSmtpServer="SMTP_SERVER", cSmtpPort="SMTP_PORT", cNotListed="NOTLISTED", cNotAllowed="NOTALLOWED";
+     static String cLogin = "LOGIN",cPass="PASS", cSmtpServer="SMTP_SERVER", cSmtpPort="SMTP_PORT", cNotListed="NOTLISTED", cNotAllowed="NOTALLOWED"
+             ,cImapServer="IMAP_SERVER", cImapPort="IMAP_PORT";
 
-    public static void readconfig() {
+    public  void readconfig() {
 
 
         Properties p=new Properties();
@@ -29,22 +30,39 @@ public class ConnectionProperties {
         configFileMap.put(cPass,p.getProperty(cPass));
         configFileMap.put(cSmtpServer,p.getProperty(cSmtpServer));
         configFileMap.put(cSmtpPort,p.getProperty(cSmtpPort));
-        configFileMap.put(cSmtpPort,p.getProperty(cSmtpPort));
+        configFileMap.put(cImapServer,p.getProperty(cImapServer));
+        configFileMap.put(cImapPort,p.getProperty(cImapServer));
         configFileMap.put(cNotListed,p.getProperty(cNotListed));
         configFileMap.put(cNotAllowed,p.getProperty(cNotAllowed));
 
 
     }
 
+    protected Properties sendEmails(){
+
+        return getProperties(cSmtpServer, cSmtpPort);
+    }
+
+    private Properties getProperties(String cSmtpServer, String cSmtpPort) {
+        readconfig();
+        String host,port;
+        host = configFileMap.get(cSmtpServer);
+        port = configFileMap.get(cSmtpPort);
+        Properties properties = getServerProperties(host,port);
+        return properties;
+    }
+
+    protected Properties ReceiveEmails(){
+
+        return getProperties(cImapServer, cImapPort);
+    }
 
 
-    protected static Properties getServerProperties() {
+    protected  Properties getServerProperties(String host, String port) {
 
         readconfig();
 
-        String host,port,protocol;
-        host = configFileMap.get(cSmtpServer);
-        port = configFileMap.get(cSmtpPort);
+        String protocol;
         protocol = host.substring(0,4);
 
         java.util.Properties properties = new java.util.Properties();
@@ -67,7 +85,7 @@ public class ConnectionProperties {
 
 
 
-    protected static Authenticator auth() {
+    protected  Authenticator auth() {
 
         String from_email,password;
 
