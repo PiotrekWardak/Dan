@@ -1,5 +1,3 @@
-package KeysValidation;
-
 import javax.mail.Authenticator;
 import javax.mail.PasswordAuthentication;
 import java.util.Properties;
