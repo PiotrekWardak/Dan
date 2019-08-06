@@ -26,7 +26,7 @@ public class Main {
         Session session = Session.getDefaultInstance(props, auth);
         System.out.println("Session created");
 
-        EmailUtil.sendEmail(session, toEmail,"Main Testing Subject", "SSLEmail Testing Body");
+        EmailUtil.sendEmail(session,FROM_EMAIL, toEmail,"Main Testing Subject", "SSLEmail Testing Body");
 
 
 
