@@ -3,7 +3,7 @@ import java.util.Map;
 
 public class Main {
 
-    private static final String FILE_PATH = "C:\\Users\\Piotrek\\Desktop\\DankaPracaDomowa\\kontakty.xlsx";
+    private static final String FILE_PATH = "kontakty.xlsx";
     private static final String toEmail = "piotrekwardak@gmail.com";
 
     public static void main(String[] args) {
