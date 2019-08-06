@@ -10,10 +10,10 @@ public class Main {
 
         Map<String,String> listaNadawcow = ExcelRead.readRecipients(FILE_PATH);
 
-        //Properties props = ;
-        //Authenticator auth = ;
+
         Session session = Session.getDefaultInstance(ConnectionProperties.getServerProperties(), ConnectionProperties.auth());
         System.out.println("Session created");
+        System.out.println(ConnectionProperties.configFileMap.get(ConnectionProperties.cNotListed));
 
 //        EmailUtil.sendEmail(session,ConnectionProperties.configFileMap.get(ConnectionProperties.cLogin), toEmail,"Maigdgdn Testing Subject", "SSLEmfdgdail Testing Body");
 
