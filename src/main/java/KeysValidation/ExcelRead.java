@@ -9,14 +9,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
-public class DanRead {
+public class ExcelRead {
 
-    private static final String FILE_NAME = "C:\\Users\\Piotrek\\Desktop\\kontakty.xlsx";
-    public static void main(String[] args) {
+
+    protected static Map<String,String> readRecipients(String path) {
 
         Map<String, String> nadawcy = new HashMap<>();;
         try {
-            FileInputStream excelFile = new FileInputStream(new File(FILE_NAME));
+            FileInputStream excelFile = new FileInputStream(new File(path));
             Workbook workbook = new XSSFWorkbook(excelFile);
             Sheet datatypeSheet = workbook.getSheetAt(0);
             Iterator<Row> iterator = datatypeSheet.iterator();
@@ -47,7 +47,7 @@ public class DanRead {
             e.printStackTrace();
         }
 
-        System.out.println(nadawcy.size());
+        return nadawcy;
 
 
     }
