@@ -1,26 +1,33 @@
+import javax.mail.Session;
+import java.util.List;
 import java.util.Map;
 
 public class Main {
 
     private static final String FILE_PATH = "kontakty.xlsx";
-    private static final String toEmail = "piotrekwardak@gmail.com";
 
     public static void main(String[] args) {
 
         Map<String,String> listaNadawcow = ExcelRead.readRecipients(FILE_PATH);
 
-//        ConnectionProperties connectionProperties = new ConnectionProperties();
-//        Session sessionSend = Session.getDefaultInstance(connectionProperties.sendEmails(), connectionProperties.auth());
-//        System.out.println("Session created");
-//        System.out.println(connectionProperties.getConfigFileMap().get(connectionProperties.getcNotListed()));
-
-//        EmailUtil.sendEmail(sessionSend,connectionProperties.getConfigFileMap().get(ConnectionProperties.cLogin), toEmail,"Maigdgdn Testing Subject", "SSLEmfdgdail Testing Body");
         EmailSearcher emailSearcher = new EmailSearcher();
         try {
-            emailSearcher.searchEmail();
+            emailSearcher.searchEmail(listaNadawcow);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        List<EmailToSave> getListOfTrustedMesseages =  emailSearcher.getListOfTrustedMesseages();
+        List<String> getListOfPeopleToRespond = emailSearcher.getListOfPeopleToRespond();
+
+        ConnectionProperties connectionProperties = new ConnectionProperties();
+
+        Session sessionSend = Session.getInstance(connectionProperties.sendEmails(), connectionProperties.auth());
+        EmailUtil.sendEmail(sessionSend,connectionProperties.getConfigFileMap().get(connectionProperties.getcLogin()), getListOfPeopleToRespond,
+                            connectionProperties.getcNotListed(), connectionProperties.configFileMap.get(connectionProperties.getcNotListed()));
+
+
+
     }
 
 }

@@ -1,4 +1,5 @@
 import javax.mail.*;
+import javax.mail.internet.InternetAddress;
 import javax.mail.search.SearchTerm;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,27 +9,27 @@ import java.util.*;
 
 public class EmailSearcher {
 
-    private List<EmailToSave> listOfTrustedMesseages = null;
-    private List<String> listOfPeopleToRespond = null;
+    private List<EmailToSave> listOfTrustedMesseages = new ArrayList<>();
+    private List<String> listOfPeopleToRespond = new ArrayList<>();
 
     public List<String> getListOfPeopleToRespond() {
         return listOfPeopleToRespond;
     }
 
-    public void setListOfPeopleToRespond(List<String> listOfPeopleToRespond) {
-        this.listOfPeopleToRespond = listOfPeopleToRespond;
+    public void addPeopleToRespond(String PeopleToRespond) {
+        this.listOfPeopleToRespond.add(PeopleToRespond);
     }
 
     public List<EmailToSave> getListOfTrustedMesseages() {
         return listOfTrustedMesseages;
     }
 
-    public void setListOfTrustedMesseages(List<EmailToSave> listOfTrustedMesseages) {
-        this.listOfTrustedMesseages = listOfTrustedMesseages;
+    public void addTrustedMesseages(EmailToSave TrustedMesseages) {
+        this.listOfTrustedMesseages.add(TrustedMesseages);
     }
 
     public void searchEmail(Map<String,String> listOfTrustedEmails) throws Exception {
-        Calendar c = Calendar.getInstance();
+//        Calendar c = Calendar.getInstance();
         ConnectionProperties connectionProperties = new ConnectionProperties();
         Session session = Session.getDefaultInstance(connectionProperties.ReceiveEmails());
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy/HH/mm/ss");
@@ -74,6 +75,8 @@ public class EmailSearcher {
             Message[] foundMessages = folderInbox.search(searchCondition);
 
             Date newDateOfEmail =dateOfTheLastEmail;
+            List<String> listOfPeopleToRespond = new ArrayList<>();
+            List<EmailToSave> emailToSaveList = new ArrayList<>();
             for (int i = 0; i < foundMessages.length; i++) {
                 Message message = foundMessages[i];
 
@@ -82,21 +85,7 @@ public class EmailSearcher {
                     System.out.println(i+" "+newDateOfEmail);
                 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-//                String subject = message.getSubject();
-//                String messageDate = sdf.format(message.getReceivedDate());
-//                System.out.println("Found message #" + i + ": " + subject + ": " + messageDate);
+                findTrustedEmails(message,emailToSaveList,listOfPeopleToRespond,listOfTrustedEmails,sdf);
             }
 
             folderInbox.close(false);
@@ -115,22 +104,43 @@ public class EmailSearcher {
         } catch (MessagingException ex) {
             ex.printStackTrace();
         }
-
     }
 
 
-//public void findTrustedEmails(Message message, List<EmailToSave> listToSave, List<String> listOfPeopleToResponse, Map<String, String> mapOfTrustedEmails){
+public void findTrustedEmails(Message message, List<EmailToSave> listToSave, List<String> listOfPeopleToResponse, Map<String, String> mapOfTrustedEmails, SimpleDateFormat sdf){
+
+    try {
+        Address[] fromAddress = message.getFrom();
+        if(mapOfTrustedEmails.get(((InternetAddress)fromAddress[0]).getAddress())!=null)
+        { EmailToSave emailToSave = new EmailToSave(((InternetAddress)fromAddress[0]).getAddress(),sdf.format(message.getReceivedDate()),message.getSubject(),message.getContentType());
+        addTrustedMesseages(emailToSave);
+
+        }
+        else
+        { addPeopleToRespond(((InternetAddress)fromAddress[0]).getAddress());
+        }
+
+    } catch (MessagingException e) {
+        e.printStackTrace();
+    }
+
+
+}
+
+
+
+//    public static void main(String[] args) {
+//        Map<String,String> listaNadawcow = ExcelRead.readRecipients("kontakty.xlsx");
 //
-//    try {
-//        if(mapOfTrustedEmails.get(message.getFrom().toString()))
-//        {
-//
+//        EmailSearcher emailSearcher = new EmailSearcher();
+//        try {
+//            emailSearcher.searchEmail(listaNadawcow);
+//        } catch (Exception e) {
+//            e.printStackTrace();
 //        }
-//    } catch (MessagingException e) {
-//        e.printStackTrace();
-//    }
 //
-//}
+//
+//    }
 
 
 }

@@ -1,13 +1,13 @@
 public class EmailToSave {
 
        private String email;
-       private String receipient;
+       private String time;
        private String subject;
        private String content;
 
-    public EmailToSave(String email, String receipient, String subject, String content) {
+    public EmailToSave(String email, String time, String subject, String content) {
         this.email = email;
-        this.receipient = receipient;
+        this.time = time;
         this.subject = subject;
         this.content = content;
     }
@@ -16,8 +16,8 @@ public class EmailToSave {
         return email;
     }
 
-    public String getReceipient() {
-        return receipient;
+    public String getTime() {
+        return time;
     }
 
     public String getSubject() {
@@ -26,5 +26,15 @@ public class EmailToSave {
 
     public String getContent() {
         return content;
+    }
+
+    @Override
+    public String toString() {
+        return "EmailToSave{" +
+                "email='" + email + '\'' +
+                ", time='" + time + '\'' +
+                ", subject='" + subject + '\'' +
+                ", content='" + content + '\'' +
+                '}';
     }
 }
