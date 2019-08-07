@@ -2,17 +2,32 @@ import javax.mail.*;
 import javax.mail.search.SearchTerm;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Scanner;
+import java.util.*;
 
 public class EmailSearcher {
 
+    private List<EmailToSave> listOfTrustedMesseages = null;
+    private List<String> listOfPeopleToRespond = null;
 
-    public void searchEmail(String userName,
-                            String password) throws Exception {
+    public List<String> getListOfPeopleToRespond() {
+        return listOfPeopleToRespond;
+    }
+
+    public void setListOfPeopleToRespond(List<String> listOfPeopleToRespond) {
+        this.listOfPeopleToRespond = listOfPeopleToRespond;
+    }
+
+    public List<EmailToSave> getListOfTrustedMesseages() {
+        return listOfTrustedMesseages;
+    }
+
+    public void setListOfTrustedMesseages(List<EmailToSave> listOfTrustedMesseages) {
+        this.listOfTrustedMesseages = listOfTrustedMesseages;
+    }
+
+    public void searchEmail(Map<String,String> listOfTrustedEmails) throws Exception {
         Calendar c = Calendar.getInstance();
         ConnectionProperties connectionProperties = new ConnectionProperties();
         Session session = Session.getDefaultInstance(connectionProperties.ReceiveEmails());
@@ -38,7 +53,7 @@ public class EmailSearcher {
 
 //            System.out.println(dateOfTheLastEmail.toString());
             Store store = session.getStore("imap");
-            store.connect(userName, password);
+            store.connect(connectionProperties.getConfigFileMap().get(connectionProperties.getcLogin()), connectionProperties.getConfigFileMap().get(connectionProperties.getcPass()));
             Folder folderInbox = store.getFolder("INBOX");
             folderInbox.open(Folder.READ_ONLY);
             SearchTerm searchCondition = new SearchTerm() {
@@ -66,21 +81,34 @@ public class EmailSearcher {
                     newDateOfEmail =message.getReceivedDate();
                     System.out.println(i+" "+newDateOfEmail);
                 }
-                String subject = message.getSubject();
-                String messageDate = sdf.format(message.getReceivedDate());
-                System.out.println("Found message #" + i + ": " + subject + ": " + messageDate);
+
+
+
+
+
+
+
+
+
+
+
+
+
+//                String subject = message.getSubject();
+//                String messageDate = sdf.format(message.getReceivedDate());
+//                System.out.println("Found message #" + i + ": " + subject + ": " + messageDate);
             }
 
             folderInbox.close(false);
             store.close();
-            System.out.println(sdf.format(newDateOfEmail));
-            FileWriter addNewDateToFile = null;
+            PrintWriter printWriter = null;
             try {
-                addNewDateToFile = new FileWriter("lastEmailDate.txt",true);
-                addNewDateToFile.append("aaaa");
+                printWriter = new PrintWriter("lastEmailDate.txt");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
+            printWriter.println(sdf.format(newDateOfEmail));
+            printWriter.close();
 
         } catch (NoSuchProviderException ex) {
             ex.printStackTrace();
@@ -88,23 +116,21 @@ public class EmailSearcher {
             ex.printStackTrace();
         }
 
-
     }
 
-    public static void main(String[] args) {
 
-        String userName = "dankapracadomowa2@wp.pl";
-        String password = "123danka";
-        EmailSearcher searcher = new EmailSearcher();
-        try {
-            searcher.searchEmail(userName, password);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
+//public void findTrustedEmails(Message message, List<EmailToSave> listToSave, List<String> listOfPeopleToResponse, Map<String, String> mapOfTrustedEmails){
+//
+//    try {
+//        if(mapOfTrustedEmails.get(message.getFrom().toString()))
+//        {
+//
+//        }
+//    } catch (MessagingException e) {
+//        e.printStackTrace();
+//    }
+//
+//}
 
 
 }

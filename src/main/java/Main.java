@@ -1,4 +1,3 @@
-import javax.mail.Session;
 import java.util.Map;
 
 public class Main {
@@ -10,13 +9,18 @@ public class Main {
 
         Map<String,String> listaNadawcow = ExcelRead.readRecipients(FILE_PATH);
 
-        ConnectionProperties connectionProperties = new ConnectionProperties();
-        Session sessionSend = Session.getDefaultInstance(connectionProperties.sendEmails(), connectionProperties.auth());
-        System.out.println("Session created");
-        System.out.println(ConnectionProperties.configFileMap.get(ConnectionProperties.cNotListed));
+//        ConnectionProperties connectionProperties = new ConnectionProperties();
+//        Session sessionSend = Session.getDefaultInstance(connectionProperties.sendEmails(), connectionProperties.auth());
+//        System.out.println("Session created");
+//        System.out.println(connectionProperties.getConfigFileMap().get(connectionProperties.getcNotListed()));
 
-//        EmailUtil.sendEmail(session,ConnectionProperties.configFileMap.get(ConnectionProperties.cLogin), toEmail,"Maigdgdn Testing Subject", "SSLEmfdgdail Testing Body");
-
+//        EmailUtil.sendEmail(sessionSend,connectionProperties.getConfigFileMap().get(ConnectionProperties.cLogin), toEmail,"Maigdgdn Testing Subject", "SSLEmfdgdail Testing Body");
+        EmailSearcher emailSearcher = new EmailSearcher();
+        try {
+            emailSearcher.searchEmail();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

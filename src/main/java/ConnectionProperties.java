@@ -10,9 +10,25 @@ import java.util.Properties;
 
 public class ConnectionProperties {
 
-    protected static Map<String,String> configFileMap=new HashMap<>();
-     static String cLogin = "LOGIN",cPass="PASS", cSmtpServer="SMTP_SERVER", cSmtpPort="SMTP_PORT", cNotListed="NOTLISTED", cNotAllowed="NOTALLOWED"
-             ,cImapServer="IMAP_SERVER", cImapPort="IMAP_PORT";
+    protected Map<String,String> configFileMap=new HashMap<>();
+    private String cLogin = "LOGIN",cPass="PASS", cSmtpServer="SMTP_SERVER", cSmtpPort="SMTP_PORT", cNotListed="NOTLISTED",
+            cNotAllowed="NOTALLOWED", cImapServer="IMAP_SERVER", cImapPort="IMAP_PORT";
+
+    public String getcNotListed() {
+        return cNotListed;
+    }
+
+    public String getcLogin() {
+        return cLogin;
+    }
+
+    public String getcPass() {
+        return cPass;
+    }
+
+    public Map<String, String> getConfigFileMap() {
+        return configFileMap;
+    }
 
     public  void readconfig() {
 
