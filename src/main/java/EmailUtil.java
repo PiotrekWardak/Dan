@@ -34,7 +34,7 @@ public class EmailUtil {
         }
     }
 
-    public void RetrieveGoodEmailsAndSendNotificationWhenWrongAddress(Map<String,String> listOfTrustedEmails){
+    public void saveTrustedEmails(Map<String,String> listOfTrustedEmails){
 
 
 

@@ -1,4 +1,3 @@
-import javax.mail.Session;
 import java.util.List;
 import java.util.Map;
 
@@ -20,11 +19,12 @@ public class Main {
         List<EmailToSave> getListOfTrustedMesseages =  emailSearcher.getListOfTrustedMesseages();
         List<String> getListOfPeopleToRespond = emailSearcher.getListOfPeopleToRespond();
 
-        ConnectionProperties connectionProperties = new ConnectionProperties();
 
-        Session sessionSend = Session.getInstance(connectionProperties.sendEmails(), connectionProperties.auth());
-        EmailUtil.sendEmail(sessionSend,connectionProperties.getConfigFileMap().get(connectionProperties.getcLogin()), getListOfPeopleToRespond,
-                            connectionProperties.getcNotListed(), connectionProperties.configFileMap.get(connectionProperties.getcNotListed()));
+
+//        ConnectionProperties connectionProperties = new ConnectionProperties();
+//        Session sessionSend = Session.getInstance(connectionProperties.sendEmails(), connectionProperties.auth());
+//        EmailUtil.sendEmail(sessionSend,connectionProperties.getConfigFileMap().get(connectionProperties.getcLogin()), getListOfPeopleToRespond,
+//                            connectionProperties.getcNotListed(), connectionProperties.configFileMap.get(connectionProperties.getcNotListed()));
 
 
 
