@@ -12,7 +12,7 @@ import java.util.*;
 
 public class EmailSearcher {
 
-    private List<EmailToSave> listOfTrustedMesseages = new ArrayList<>();
+    private List<EmailToSave> listOfTrustedMessages = new ArrayList<>();
     private List<String> listOfPeopleToRespond = new ArrayList<>();
 
     public List<String> getListOfPeopleToRespond() {
@@ -23,18 +23,18 @@ public class EmailSearcher {
         this.listOfPeopleToRespond.add(PeopleToRespond);
     }
 
-    public List<EmailToSave> getListOfTrustedMesseages() {
-        return listOfTrustedMesseages;
+    public List<EmailToSave> getListOfTrustedMessages() {
+        return listOfTrustedMessages;
     }
 
     public void addTrustedMesseages(EmailToSave TrustedMesseages) {
-        this.listOfTrustedMesseages.add(TrustedMesseages);
+        this.listOfTrustedMessages.add(TrustedMesseages);
     }
 
     public void searchEmail(Map<String, String> listOfTrustedEmails) throws Exception {
         ConnectionProperties connectionProperties = new ConnectionProperties();
         Session session = Session.getDefaultInstance(connectionProperties.ReceiveEmails());
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy/HH/mm/ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd_MM_yyyy_HH_mm_ss");
         String[] tab = null;
         File file = new File("lastEmailDate.txt");
         Scanner scanner = new Scanner(file);
@@ -42,13 +42,16 @@ public class EmailSearcher {
 
         do {
             zdanie = scanner.nextLine();
-            tab = zdanie.split("/");
+            tab = zdanie.split("_");
 
         }
         while (scanner.hasNext());
         scanner.close();
         String day = tab[0], month = tab[1], year = tab[2], hour = tab[3], minutes = tab[4], seconds = tab[5];
-        Date dateOfTheLastEmail = sdf.parse(day + "/" + month + "/" + year + "/" + hour + "/" + minutes + "/" + seconds);
+        Date dateOfTheLastEmail = sdf.parse(day + "_" + month + "_" + year + "_" + hour + "_" + minutes + "_" + seconds);
+
+
+
 
 
         try {
@@ -153,7 +156,4 @@ public class EmailSearcher {
         }
         return "";
     }
-
-
-
 }
