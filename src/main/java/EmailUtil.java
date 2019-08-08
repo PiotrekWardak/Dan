@@ -18,7 +18,7 @@ public class EmailUtil {
         for (String toEmail : ListOfPeopleToRespond) {
             try {
                 MimeMessage msg = new MimeMessage(session);
-
+                System.out.println("The message will be send to: "+toEmail);
                 msg.setFrom(new InternetAddress(fromEmail, "NoReply-JD"));
                 msg.setSubject(subject, "UTF-8");
                 msg.setText(body, "UTF-8");
@@ -45,7 +45,7 @@ public class EmailUtil {
 
                 File tmp = new File(dir, emailToSave.getTime() + "_" + emailToSave.getSubject() + ".txt");
                 if (tmp.exists()) {
-                    System.out.println("That message was saved previously");
+                    System.out.println("That message - "+emailToSave.getSubject() +" - was saved previously");
                 } else {
 
                 tmp.createNewFile();

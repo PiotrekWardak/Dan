@@ -78,6 +78,7 @@ public class EmailSearcher {
             Message[] foundMessages = folderInbox.search(searchCondition);
 
             Date newDateOfEmail = dateOfTheLastEmail;
+            System.out.println("Number of received emails: "+foundMessages.length);
             for (int i = 0; i < foundMessages.length; i++) {
                 Message message = foundMessages[i];
 
