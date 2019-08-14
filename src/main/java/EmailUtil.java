@@ -48,26 +48,37 @@ public class EmailUtil {
     public static void saveEmailOnDrive(List<EmailToSave> listOfTrustedEmails) throws IOException, MessagingException {
 
         for (EmailToSave emailToSave : listOfTrustedEmails) {
-            PrintWriter printWriter = null;
             File dir1EmailAddress = new File("zapisaneWiadomosci/" + emailToSave.getEmail());
             File dir2EmailTime = new File("zapisaneWiadomosci/" + emailToSave.getEmail() + "/" + emailToSave.getTime());
             if (dir1EmailAddress.exists()) {
 
+                if (dir1EmailAddress.exists()) {
 
-                File tmp = new File(dir1EmailAddress, emailToSave.getTime() + "_" + emailToSave.getSubject() + ".txt");
-                if (tmp.exists()) {
-                    System.out.println("That message - " + emailToSave.getSubject() + " - was saved previously");
+                    File tmp = new File(dir2EmailTime, emailToSave.getTime() + "_" + emailToSave.getSubject() + ".txt");
+                    if (tmp.exists()) {
+                        System.out.println("That message - " + emailToSave.getSubject() + " - was saved previously");
+                    } else {
+                        dir2EmailTime.mkdirs();
+                        zapis(emailToSave, dir2EmailTime, tmp);
+                    }
+
+
                 } else {
 
-                    zapis(emailToSave, dir1EmailAddress, tmp);
+                    dir2EmailTime.mkdirs();
+                    File tmp = new File(dir2EmailTime, emailToSave.getTime() + "_" + emailToSave.getSubject() + ".txt");
+                    zapis(emailToSave, dir2EmailTime, tmp);
+
                 }
+
 
             } else {
 
 
                 dir1EmailAddress.mkdirs();
-                File tmp = new File(dir1EmailAddress, emailToSave.getTime() + "_" + emailToSave.getSubject() + ".txt");
-                zapis(emailToSave, dir1EmailAddress, tmp);
+                dir2EmailTime.mkdirs();
+                File tmp = new File(dir2EmailTime, emailToSave.getTime() + "_" + emailToSave.getSubject() + ".txt");
+                zapis(emailToSave, dir2EmailTime, tmp);
             }
         }
     }
@@ -78,13 +89,14 @@ public class EmailUtil {
         printWriter = new PrintWriter(tmp.getAbsoluteFile());
         printWriter.println(emailToSave.getContent());
         printWriter.close();
-        EmailUtil emailUtil = new EmailUtil();
+        if(emailToSave.getmimeBodyPartList()!=null){
+
         for (MimeBodyPart mimeBodyPart : emailToSave.getmimeBodyPartList()) {
 
             if (mimeBodyPart != null) {
                 String fileName = mimeBodyPart.getFileName();
                 String extension = getFileExtension(fileName);
-                if (extension.equals("pdf") || extension.equals("docx") || extension.equals("zip") || extension.equals("xades")) {
+                if (extension.equals("pdf") || extension.equals("docx") || extension.equals("properties") || extension.equals("xades")) {
                     mimeBodyPart.saveFile(dir1EmailAddress + File.separator + fileName);
                 } else {
 
@@ -92,6 +104,7 @@ public class EmailUtil {
 
                 }
             }
+        }
         }
         wrongAttachmentToSendInfoList = Lists.newArrayList(wrongAttachmentToSendInfoSet);
     }
