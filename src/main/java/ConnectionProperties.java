@@ -14,6 +14,10 @@ public class ConnectionProperties {
     private String cLogin = "LOGIN",cPass="PASS", cSmtpServer="SMTP_SERVER", cSmtpPort="SMTP_PORT", cNotListed="NOTLISTED",
             cNotAllowed="NOTALLOWED", cImapServer="IMAP_SERVER", cImapPort="IMAP_PORT";
 
+    public String getcNotAllowed() {
+        return cNotAllowed;
+    }
+
     public String getcNotListed() {
         return cNotListed;
     }

@@ -2,6 +2,7 @@ import org.jsoup.Jsoup;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.search.SearchTerm;
 import java.io.File;
@@ -51,9 +52,6 @@ public class EmailSearcher {
         Date dateOfTheLastEmail = sdf.parse(day + "_" + month + "_" + year + "_" + hour + "_" + minutes + "_" + seconds);
 
 
-
-
-
         try {
 
             Store store = session.getStore("imap");
@@ -78,20 +76,25 @@ public class EmailSearcher {
             Message[] foundMessages = folderInbox.search(searchCondition);
 
             Date newDateOfEmail = dateOfTheLastEmail;
-            System.out.println("Number of received emails: "+foundMessages.length);
-            for (int i = 0; i < foundMessages.length; i++) {
-                Message message = foundMessages[i];
+            System.out.println("Number of received emails: " + foundMessages.length);
+            for (int i = 1; i <= foundMessages.length; i++) {
+                Message message = foundMessages[i-1];
 
                 if (newDateOfEmail.before(message.getReceivedDate())) {
                     newDateOfEmail = message.getReceivedDate();
-                    System.out.println(i + " " + newDateOfEmail);
+                    System.out.println((i+1) + " " + newDateOfEmail);
                 }
 
                 findTrustedEmails(message, listOfTrustedEmails, sdf);
+
             }
 
-            folderInbox.close(false);
-            store.close();
+            System.out.println("Wielkosc tablicy Trusted to: " + getListOfTrustedMessages().size());
+            System.out.println("Wielkosc tablicy To Respong to: " + getListOfPeopleToRespond().size());
+
+//
+//            folderInbox.close(false);
+//            store.close();
             PrintWriter printWriter = null;
             try {
                 printWriter = new PrintWriter("lastEmailDate.txt");
@@ -115,8 +118,44 @@ public class EmailSearcher {
             Address[] fromAddress = message.getFrom();
             if (mapOfTrustedEmails.get(((InternetAddress) fromAddress[0]).getAddress()) != null) {
                 EmailToSave emailToSave = null;
+
+                String contentType = message.getContentType();
+
                 try {
-                    emailToSave = new EmailToSave(((InternetAddress) fromAddress[0]).getAddress(), sdf.format(message.getReceivedDate()), message.getSubject(), getTextFromMessage(message));
+
+
+                    if (contentType.contains("multipart"))
+                    {
+                        // content may contain attachments
+                        Object content = message.getContent();
+                        MimeMultipart multipartToRetrieveText = (MimeMultipart) content;
+                        Multipart multiPart = (Multipart) message.getContent();
+
+
+
+                        int numberOfParts = multiPart.getCount();
+                        List<MimeBodyPart> listParts = new ArrayList<>();
+                        for (int partCount = 0; partCount < numberOfParts; partCount++)
+                        {
+                            MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+                            if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition()))
+                            {
+                                listParts.add(part);
+
+                            }
+
+                        }
+                        emailToSave = new EmailToSave(((InternetAddress) fromAddress[0]).getAddress(), sdf.format(message.getReceivedDate()),
+                                message.getSubject(), getTextFromMimeMultipart(multipartToRetrieveText), listParts);
+
+                    }
+
+
+
+                    else{
+                        emailToSave = new EmailToSave(((InternetAddress) fromAddress[0]).getAddress(), sdf.format(message.getReceivedDate()),
+                                message.getSubject(), getTextFromMessage(message), null);
+                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -127,6 +166,7 @@ public class EmailSearcher {
                 addPeopleToRespond(((InternetAddress) fromAddress[0]).getAddress());
             }
 
+
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -136,18 +176,18 @@ public class EmailSearcher {
 
 
     private String getTextFromMessage(Message message) throws Exception {
-        if (message.isMimeType("text/plain")){
+        if (message.isMimeType("text/plain")) {
             return message.getContent().toString();
-        }else if (message.isMimeType("multipart/*")) {
+        } else if (message.isMimeType("multipart/*")) {
             String result = "";
-            MimeMultipart mimeMultipart = (MimeMultipart)message.getContent();
+            MimeMultipart mimeMultipart = (MimeMultipart) message.getContent();
             int count = mimeMultipart.getCount();
-            for (int i = 0; i < count; i ++){
+            for (int i = 0; i < count; i++) {
                 BodyPart bodyPart = mimeMultipart.getBodyPart(i);
-                if (bodyPart.isMimeType("text/plain")){
+                if (bodyPart.isMimeType("text/plain")) {
                     result = result + "\n" + bodyPart.getContent();
                     break;
-                } else if (bodyPart.isMimeType("text/html")){
+                } else if (bodyPart.isMimeType("text/html")) {
                     String html = (String) bodyPart.getContent();
                     result = result + "\n" + Jsoup.parse(html).text();
 
@@ -156,5 +196,23 @@ public class EmailSearcher {
             return result;
         }
         return "";
+    }
+
+    private String getTextFromMimeMultipart(MimeMultipart mimeMultipart) throws Exception {
+        String result = "";
+        int partCount = mimeMultipart.getCount();
+        for (int i = 0; i < partCount; i++) {
+            BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+            if (bodyPart.isMimeType("text/plain")) {
+                result = result + "\n" + bodyPart.getContent();
+                break;
+            } else if (bodyPart.isMimeType("text/html")) {
+                String html = (String) bodyPart.getContent();
+                result = html;
+            } else if (bodyPart.getContent() instanceof MimeMultipart) {
+                result = result + getTextFromMimeMultipart((MimeMultipart) bodyPart.getContent());
+            }
+        }
+        return result;
     }
 }

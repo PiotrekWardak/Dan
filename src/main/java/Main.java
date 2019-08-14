@@ -1,3 +1,4 @@
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import java.io.IOException;
 import java.util.List;
@@ -9,14 +10,17 @@ public class Main {
     private static final String FILE_PATH = "kontakty.xlsx";
 
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException, InterruptedException, MessagingException {
 
-        long time = numberValidation() * 60000;
+//        long time = numberValidation() * 60000;
+//
+//        while (true) {
+//            action();
+//            Thread.sleep(time);
+//        }
 
-        while (true) {
-            action();
-            Thread.sleep(time);
-        }
+        action();
+
     }
 
 
@@ -46,7 +50,7 @@ public class Main {
 
     }
 
-    private static void action() throws IOException {
+    private static void action() throws IOException, MessagingException {
 
         Map<String, String> listaNadawcow = ExcelRead.readRecipients(FILE_PATH);
 
@@ -66,6 +70,10 @@ public class Main {
         Session sessionSend = Session.getInstance(connectionProperties.sendEmails(), connectionProperties.auth());
         EmailUtil.sendEmail(sessionSend, connectionProperties.getConfigFileMap().get(connectionProperties.getcLogin()), getListOfPeopleToRespond,
                 connectionProperties.getcNotListed(), connectionProperties.configFileMap.get(connectionProperties.getcNotListed()));
+//        Session sessionSendAttachmentsInfo = Session.getInstance(connectionProperties.sendEmails(), connectionProperties.auth());
+        System.out.println(EmailUtil.getWrongAttachmentToSendInfoList());
+        EmailUtil.sendEmail(sessionSend, connectionProperties.getConfigFileMap().get(connectionProperties.getcLogin()), EmailUtil.getWrongAttachmentToSendInfoList(),
+                connectionProperties.getcNotAllowed(), connectionProperties.configFileMap.get(connectionProperties.getcNotAllowed()));
     }
 
 }
